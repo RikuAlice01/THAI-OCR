@@ -69,14 +69,25 @@ def extract_fields(texts):
         data["citizen_id"] = cid_match.group().replace(" ", "")
 
     # 2. ชื่อ-นามสกุล ภาษาไทย + คำนำหน้า
-    name_th_match = re.search(r"(น\.ส\.|นาย|นาง)\s*([ก-๙]+)\s+([ก-๙]+)", text)
+    prefixes = [
+    "น\.ส\.", "นาย", "นาง",  # นามสกุลทั่วไป
+    "พล\.ท\.", "พล\.ร\.ท\.", "พล\.ต\.", "พล\.ท\.",  # ตำรวจ
+    "ท\.ท\.", "พล\.จ\.", "ทหาร",  # ทหาร
+    "ดร\.", "ศาสตราจารย์", "หมอ", "แพทย์",  # หมอ
+    
+    ]
+
+    # แก้ไข regex ให้รองรับยศทางการ
+    prefix_pattern = "|".join(prefixes)
+    name_th_match = re.search(rf"({prefix_pattern})\s*([ก-๙]+)\s+([ก-๙]+)", text)
+
     if name_th_match:
         data["prefix"] = name_th_match.group(1)
         data["name_th"] = name_th_match.group(2)
         data["lastname_th"] = name_th_match.group(3)
 
     # 3. ชื่อ-นามสกุล ภาษาอังกฤษ
-    name_en_match = re.search(r"\b(miss|mr|mrs)[\s:]+([a-z]+)", text)
+    name_en_match = re.search(r"\b(mr|mrs|miss|dr|prof|sir|rev)[\s:]+([a-z]+)", text)
     lastname_en_match = re.search(r"last\s+name[\s:]+([a-z]+)", text)
     if name_en_match:
         data["name_en"] = name_en_match.group(2).capitalize()
