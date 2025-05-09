@@ -55,6 +55,8 @@ def extract_fields(texts):
         "dob": None,
         "religion": None,
         "address": None,
+        "village": None,
+        "subdistrict": None,
         "district": None,
         "province": None,
         "issued_date": None,
@@ -91,20 +93,30 @@ def extract_fields(texts):
     if religion_match:
         data["religion"] = religion_match.group(1).capitalize()
 
-    # 6. ที่อยู่
-    address_match = re.search(r"(\d{1,4}\/\d{1,4}.*?)\s+(อ\.|จ\.)", text)
+    # 6. ที่อยู่ (ไม่รวมหมู่/ตำบล)
+    address_match = re.search(r"(\d{1,4}\/\d{1,4}.*?)\s+(หมู่ที่|หมู่ที|หมูที่|หม่ที่|หมูที|หม่ที|หมทีหมู่|ม\.|ต\.|อ\.|จ\.)", text)
     if address_match:
         data["address"] = address_match.group(1).strip()
 
+    # 6.1 หมู่ที่
+    village_match = re.search(r"(หมู่ที่|หมู่ที|หมูที่|หม่ที่|หมูที|หม่ที|หมที\.)\s*(\d{1,2})", text)
+    if village_match:
+        data["village"] = village_match.group(2)
+
+    # 6.2 ตำบล
+    subdistrict_match = re.search(r"(ตำบล|ต\.)\s*([ก-๙]+)", text)
+    if subdistrict_match:
+        data["subdistrict"] = subdistrict_match.group(2)
+
     # 7. อำเภอ
-    district_match = re.search(r"อ\.([\wก-๙]+)", text)
+    district_match = re.search(r"(อำเภอ|อ\.)\s*([ก-๙]+)", text)
     if district_match:
-        data["district"] = district_match.group(1)
+        data["district"] = district_match.group(2)
 
     # 8. จังหวัด
-    province_match = re.search(r"จ\.([\wก-๙]+)", text)
+    province_match = re.search(r"(จังหวัด|จ\.)\s*([ก-๙]+)", text)
     if province_match:
-        data["province"] = province_match.group(1)
+        data["province"] = province_match.group(2)
 
     # 9-10. วันออกบัตร / วันหมดอายุ (issued date อยู่ก่อน "วันออกบัตร", expired อยู่หลัง)
     card_dates_match = re.search(
@@ -116,5 +128,3 @@ def extract_fields(texts):
         data["expired_date"] = card_dates_match.group(2).strip().replace('ึ', 'ิ').replace('ื', 'ิ')
 
     return data
-
-
