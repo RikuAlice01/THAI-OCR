@@ -13,7 +13,7 @@ This project is a REST API built using **FastAPI**, designed to extract informat
   - Thai & English names
   - Date of birth
   - Religion
-  - Address (District, Province)
+  - Address (Village, Subdistrict, District, Province)
   - Card issued/expired dates
 
 ---
