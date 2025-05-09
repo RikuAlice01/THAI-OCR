@@ -30,8 +30,8 @@ This project is a REST API built using **FastAPI**, designed to extract informat
 
 ```bash
 # 1. Clone this repo
-git clone https://github.com/RikuAlice01/THAI-OCR.git
-cd THAI-OCR
+git clone https://github.com/RikuAlice01/THAIIDCARD-OCR.git
+cd THAIIDCARD-OCR
 
 # 2. Create a virtual environment (optional)
 python -m venv venv
